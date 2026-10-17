@@ -1,0 +1,14 @@
+
+# Archivos generados por .NET
+**/bin/
+**/obj/
+
+# Configuración local de Visual Studio
+.vs/
+*.user
+*.suo
+
+# Secretos y variables de entorno
+.env
+.env.*
+!.env.example
