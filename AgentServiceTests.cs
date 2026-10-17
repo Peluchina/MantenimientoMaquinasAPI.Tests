@@ -102,5 +102,35 @@ public class AgentServiceTests
             "Error simulado del cliente de IA.",
             exception.Message);
     }
+
+
+    [Fact]
+    public async Task AskAsync_PreguntaValida_IncluyeHerramientaEnOpciones()
+    {
+        ChatOptions? capturedOptions = null;
+
+        _chatClientMock
+            .Setup(c => c.GetResponseAsync(
+                It.IsAny<IEnumerable<ChatMessage>>(),
+                It.IsAny<ChatOptions>(),
+                It.IsAny<CancellationToken>()))
+            .Callback<IEnumerable<ChatMessage>, ChatOptions, CancellationToken>(
+                (messages, options, cancellationToken) =>
+                {
+                    capturedOptions = options;
+                })
+            .ReturnsAsync(
+                new ChatResponse(
+                    new ChatMessage(
+                        ChatRole.Assistant,
+                        "Hay máquinas que necesitan revisión.")));
+
+        await _agentService.AskAsync("¿Qué máquinas están en riesgo?");
+
+        Assert.NotNull(capturedOptions);
+        Assert.NotNull(capturedOptions.Tools);
+        Assert.NotEmpty(capturedOptions.Tools);
+    }
+
 }
 
